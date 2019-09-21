@@ -23,7 +23,7 @@ namespace DXFormHandler.Controller.Bitmap
                     SharpDX.WIC.PixelFormat.Format32bppBGRA, 
                     BitmapDitherType.DualSpiral8x8,
                     null,
-                    0.0, 
+                    0.5, 
                     BitmapPaletteType.Custom);
             return formatConverter;
         }

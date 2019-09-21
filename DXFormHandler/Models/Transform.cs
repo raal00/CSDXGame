@@ -2,12 +2,21 @@
 
 namespace DXFormHandler.Models
 {
-    class Transform
+    public class Transform
     {
-        public int XPos;
-        public int YPox;
-
         public float RotationX;
         public float RotationY;
+    }
+
+    public class Position
+    {
+        public Position(int x, int y)
+        {
+            XPos = x;
+            YPox = y;
+        }
+
+        public int XPos;
+        public int YPox;
     }
 }

@@ -18,8 +18,10 @@ namespace DXFormHandler.Controller
         public GameForm(string formTitle)
         {
             gameFormTitle = formTitle;
-            
+
             initForm();
+            initObjects();
+
             callback = new RenderLoop.RenderCallback(Render);
             RenderLoop.Run(mainRenderForm, callback);
         }
@@ -29,7 +31,7 @@ namespace DXFormHandler.Controller
         private readonly string gameFormTitle;
 
         // FORM
-        private RenderForm mainRenderForm;
+        protected RenderForm mainRenderForm;
 
         public WindowRenderTarget RenderTarget = null;  // DROP GRAPHIC HERE -> DRAW
         private SharpDX.Direct2D1.Factory Factory = null; //
@@ -43,7 +45,7 @@ namespace DXFormHandler.Controller
 
         private RenderLoop.RenderCallback callback;
         private FPSModel fpsModel;
-        private TextFormat textFormat;
+        protected TextFormat textFormat;
 
         //FPS
         private double fps = 0;
@@ -106,6 +108,8 @@ namespace DXFormHandler.Controller
             mainRenderForm.Show();
         }
 
+        protected virtual void initObjects() { }
+
         private void Render()
         {
             if (pause) return;
@@ -117,9 +121,9 @@ namespace DXFormHandler.Controller
 
 
             RenderTarget.DrawText("GameForm is working", textFormat, TitleTextBox, blackBrush);
-             if (FormStyle.ShowFPS) RenderTarget.DrawText($"{(int)fps} fps", textFormat, fpsTextBox, greenBrush);
-
+             
             GameLogic();
+            if (FormStyle.ShowFPS) RenderTarget.DrawText($"{(int)fps} fps", textFormat, fpsTextBox, greenBrush);
 
             // END
 
