@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DXFormHandler</RootNamespace>
     <AssemblyName>DXFormHandler</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -59,10 +60,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="2DGame.cs" />
-    <Compile Include="Controller\MainDXForm.cs" />
+    <Compile Include="Controller\Bitmap\BitmapHandler.cs" />
+    <Compile Include="Controller\GameForm.cs" />
     <Compile Include="Models\FormColors.cs" />
     <Compile Include="Models\FormStyle.cs" />
     <Compile Include="Models\FPSModel.cs" />
+    <Compile Include="Models\GameObject.cs" />
+    <Compile Include="Models\Transform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

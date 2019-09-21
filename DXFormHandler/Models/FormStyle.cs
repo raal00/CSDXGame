@@ -1,16 +1,15 @@
-﻿using System;
+﻿using SharpDX.Direct2D1;
+using System;
 
 namespace DXFormHandler.Models
 {
-    public class FormStyle
+    public static class FormStyle
     {
-        public FormStyle()
-        {
+        public static int Width { get; set; } = 1280;
 
-        }
+        public static int Height { get; set; } = 720;
 
-        public int Width { get; set; }
-        public int Height { get; set; }
-
+        public static bool ShowFPS { get; set; } = true;
     }
+
 }
