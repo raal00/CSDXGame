@@ -5,10 +5,12 @@ using DXFormHandler.Controller.Bitmap;
 using System.Drawing.Imaging;
 using SharpDX.Direct2D1;
 using SharpDX.Mathematics.Interop;
+using DXFormHandler.Models.Interfaces;
+using DXFormHandler.Models.Objects;
 
 namespace DXFormHandler.Models
 {
-    class GameObject
+    class GameObject : IGameObject
     {
         /*
           . . . (0,0)_____T_____ (0,n) ->
@@ -24,21 +26,23 @@ namespace DXFormHandler.Models
         public GameObject(string name, string texturePath, Size2 size, Position pos, WindowRenderTarget renderTarget)
         {
             this.ObjectName = name;
-            this.size = size;
+            this.ObjectPosition = pos;
 
-            ObjectRectangle = new RawRectangleF(pos.XPos - size.Width  / 2,
-                                                pos.YPox - size.Height / 2,
-                                                pos.XPos + size.Width  / 2,
-                                                pos.YPox + size.Height / 2);
-            ObjectRectangleName = new RawRectangleF(ObjectRectangle.Left + size.Width / 4, 
-                                                    ObjectRectangle.Top - 20, 
-                                                    ObjectRectangle.Right - size.Width / 4, 
+            ObjectRectangle = new RawRectangleF(pos.XPos - size.Width / 2,
+                                                pos.YPos - size.Height / 2,
+                                                pos.XPos + size.Width / 2,
+                                                pos.YPos + size.Height / 2);
+            ObjectRectangleName = new RawRectangleF(ObjectRectangle.Left + size.Width / 4,
+                                                    ObjectRectangle.Top - 20,
+                                                    ObjectRectangle.Right - size.Width / 4,
                                                     ObjectRectangle.Top - 1);
 
             SetTexture(texturePath, renderTarget);
         }
 
-        public Transform ObjectTransform { get; set; }
+        public Rotation ObjectRotation;
+        public Position ObjectPosition;
+
         public readonly string ObjectName;
 
         public SharpDX.Direct2D1.Bitmap ObjectBitmap;
@@ -46,32 +50,32 @@ namespace DXFormHandler.Models
         public RawRectangleF ObjectRectangle;
         public RawRectangleF ObjectRectangleName;
 
-        private readonly Size2 size;
+        public float Speed = 3f;
 
-        public float jumpPower = 10;
-        public float Weight = 1.2f;
-        public float Speed = 1.5f;
+        public ObjectTypeEnum tag { get; set; }
 
-        private int layer;
-
-        public void MoveBottom(float dist)
+        public virtual void Move(Vector2 moveVector2)
         {
-            float rdist = dist * Weight;
-            ObjectRectangle.Bottom += rdist;
-            ObjectRectangle.Top += rdist;
+            if (moveVector2.XMove != 0)
+            {
+                float move = moveVector2.XMove * Speed;
+                ObjectRectangle.Left += move;
+                ObjectRectangle.Right += move;
+                ObjectRectangleName.Left += move;
+                ObjectRectangleName.Right += move;
 
-            ObjectRectangleName.Bottom += rdist;
-            ObjectRectangleName.Top += rdist;
-        }
+                ObjectPosition.XPos += move;
+            }
+            if (moveVector2.YMove != 0)
+            {
+                float move = moveVector2.YMove * Speed;
+                ObjectRectangle.Bottom += move;
+                ObjectRectangle.Top += move;
+                ObjectRectangleName.Bottom += move;
+                ObjectRectangleName.Top += move;
 
-        public void MoveRight(float dist)
-        {
-            float rdist = dist * Speed;
-            ObjectRectangle.Left += rdist;
-            ObjectRectangle.Right += rdist;
-
-            ObjectRectangleName.Left += rdist;
-            ObjectRectangleName.Right += rdist;
+                ObjectPosition.YPos += move;
+            }
         }
 
         public void SetTexture(string texturePath, WindowRenderTarget target)

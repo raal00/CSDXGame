@@ -61,12 +61,19 @@
   <ItemGroup>
     <Compile Include="2DGame.cs" />
     <Compile Include="Controller\Bitmap\BitmapHandler.cs" />
-    <Compile Include="Controller\GameForm.cs" />
-    <Compile Include="Models\FormColors.cs" />
-    <Compile Include="Models\FormStyle.cs" />
+    <Compile Include="Models\GameForm.cs" />
+    <Compile Include="Models\MainForm.cs" />
+    <Compile Include="Models\Environment\BackGround.cs" />
+    <Compile Include="Models\Styles\FormColors.cs" />
+    <Compile Include="Models\Styles\FormStyle.cs" />
     <Compile Include="Models\FPSModel.cs" />
     <Compile Include="Models\GameObject.cs" />
+    <Compile Include="Models\Interfaces\IGameObject.cs" />
+    <Compile Include="Models\Objects\ObjectTypes.cs" />
+    <Compile Include="Models\Styles\MapStyle.cs" />
     <Compile Include="Models\Transform.cs" />
+    <Compile Include="Models\UserControl\UserControlHandler.cs" />
+    <Compile Include="Models\Vector2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

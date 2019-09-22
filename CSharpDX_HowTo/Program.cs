@@ -8,7 +8,9 @@ namespace CSharpDX_HowTo
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Приложение запущено");
             _2DGame game = new _2DGame();
+            
             game.Play();
 
             Console.ReadKey();

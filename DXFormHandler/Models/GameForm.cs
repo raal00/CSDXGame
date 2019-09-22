@@ -10,6 +10,7 @@ using SharpDX.Windows;
 
 using DXFormHandler.Models;
 using System.Diagnostics;
+using DXFormHandler.Models.Styles;
 
 namespace DXFormHandler.Controller
 {
@@ -20,10 +21,13 @@ namespace DXFormHandler.Controller
             gameFormTitle = formTitle;
 
             initForm();
+
+            Console.WriteLine("Форма создана");
+
             initObjects();
 
-            callback = new RenderLoop.RenderCallback(Render);
-            RenderLoop.Run(mainRenderForm, callback);
+            Console.WriteLine("Объекты созданы");
+
         }
 
 
@@ -32,7 +36,7 @@ namespace DXFormHandler.Controller
 
         // FORM
         protected RenderForm mainRenderForm;
-
+        protected MapStyle mapStyle;
         public WindowRenderTarget RenderTarget = null;  // DROP GRAPHIC HERE -> DRAW
         private SharpDX.Direct2D1.Factory Factory = null; //
 
@@ -41,7 +45,7 @@ namespace DXFormHandler.Controller
         
         private SolidColorBrush blackBrush;
         private SolidColorBrush greenBrush;
-
+        private SolidColorBrush yellowBrush;
 
         private RenderLoop.RenderCallback callback;
         private FPSModel fpsModel;
@@ -64,9 +68,16 @@ namespace DXFormHandler.Controller
         #endregion
 
         #region GAME FORM METHODS
+
         public void GamePauseMode(bool pause)
         {
             this.pause = pause;
+        }
+
+        public void StartRender()
+        {
+            callback = new RenderLoop.RenderCallback(Render);
+            RenderLoop.Run(mainRenderForm, callback);
         }
 
         /// <summary>
@@ -85,7 +96,7 @@ namespace DXFormHandler.Controller
             fpsTextBox = new SharpDX.Mathematics.Interop.RawRectangleF(4, 32, 255, 4);
             TitleTextBox = new SharpDX.Mathematics.Interop.RawRectangleF(4, 4, 255, 4);
 
-            textFormat = new TextFormat(new SharpDX.DirectWrite.Factory(), "Calibri", 10) { TextAlignment = TextAlignment.Leading, ParagraphAlignment = ParagraphAlignment.Center };
+            textFormat = new TextFormat(new SharpDX.DirectWrite.Factory(), "Tahoma", 15) { TextAlignment = TextAlignment.Leading, ParagraphAlignment = ParagraphAlignment.Center };
             mainRenderForm.Width = FormStyle.Width;
             mainRenderForm.Height = FormStyle.Height;
             fps = fpsModel.FPS;
@@ -101,14 +112,16 @@ namespace DXFormHandler.Controller
             hwndTargetProperties.PresentOptions = PresentOptions.None;
 
             RenderTarget = new WindowRenderTarget(Factory, rndTargetProperties, hwndTargetProperties);
-            
+
             blackBrush = new SolidColorBrush(RenderTarget, SharpDX.Color.Black);
             greenBrush = new SolidColorBrush(RenderTarget, SharpDX.Color.Green);
+            yellowBrush = new SolidColorBrush(RenderTarget, SharpDX.Color.YellowGreen);
 
             mainRenderForm.Show();
         }
 
         protected virtual void initObjects() { }
+
 
         private void Render()
         {
@@ -119,12 +132,11 @@ namespace DXFormHandler.Controller
 
             // START
 
-
             RenderTarget.DrawText("GameForm is working", textFormat, TitleTextBox, blackBrush);
              
             GameLogic();
-            if (FormStyle.ShowFPS) RenderTarget.DrawText($"{(int)fps} fps", textFormat, fpsTextBox, greenBrush);
-
+            if (FormStyle.ShowFPS) RenderTarget.DrawText($"{(int)fps} fps", textFormat, fpsTextBox, yellowBrush);
+            
             // END
 
             RenderTarget.EndDraw();
@@ -146,7 +158,10 @@ namespace DXFormHandler.Controller
             }
         }
 
-        public virtual void GameLogic() { }
+        public virtual void GameLogic()
+        {
+
+        }
         #endregion
 
     }

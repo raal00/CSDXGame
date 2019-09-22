@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace DXFormHandler.Models
+﻿namespace DXFormHandler.Models
 {
-    public class Transform
+    public class Rotation
     {
         public float RotationX;
         public float RotationY;
@@ -10,13 +8,13 @@ namespace DXFormHandler.Models
 
     public class Position
     {
-        public Position(int x, int y)
+        public Position(float x, float y)
         {
             XPos = x;
-            YPox = y;
+            YPos = y;
         }
 
-        public int XPos;
-        public int YPox;
+        public float XPos;
+        public float YPos;
     }
 }
