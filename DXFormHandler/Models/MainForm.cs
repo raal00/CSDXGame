@@ -23,7 +23,17 @@ namespace DXFormHandler
         private float K;
 
         private Position heroScreenPosition;
+
         private Vector2 PositionChange = new Vector2() { XMove = 0, YMove = 0 };
+        private Vector2 CameraMoving = new Vector2() { XMove = 0, YMove = 0};
+        private Vector2 objectsMoving = new Vector2() { XMove = 0, YMove = 0 };
+        private Vector2 npcMove = new Vector2();
+        private int cameraSpeed = 2;
+
+        private bool isCameraMoving = false;
+        private bool isHorizCameraMoving = false;
+        private bool isVerticCameraMoving = false;
+
 
         private Background VisibleMap;
         #endregion
@@ -63,8 +73,54 @@ namespace DXFormHandler
         private void SetBinds()
         {
             mainRenderForm.KeyDown += CSGameKeyClick;
+
             mainRenderForm.SizeChanged += CSGameWindowSizeChange;
+
             mainRenderForm.MouseClick += CSGameUserClick;
+            mainRenderForm.MouseMove += CSGameMouseMove;
+        }
+
+        #region Events
+        private void CSGameMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.X > mainRenderForm.Width - 100)
+            {
+                CameraMoving.XMove = cameraSpeed;
+                objectsMoving.XMove = -cameraSpeed;
+                isHorizCameraMoving = true;
+            }
+            else if (e.X < 100)
+            {
+                CameraMoving.XMove = -cameraSpeed;
+                objectsMoving.XMove = cameraSpeed;
+                isHorizCameraMoving = true;
+            }
+            else
+            {
+                CameraMoving.XMove = 0;
+                objectsMoving.XMove = 0;
+                isHorizCameraMoving = false;
+            }
+
+            if (e.Y > mainRenderForm.Height - 100)
+            {
+                CameraMoving.YMove = cameraSpeed;
+                objectsMoving.YMove = -cameraSpeed;
+                isVerticCameraMoving = true;
+            }
+            else if (e.Y < 100)
+            {
+                CameraMoving.YMove = -cameraSpeed;
+                objectsMoving.YMove = cameraSpeed;
+                isVerticCameraMoving = true;
+            }
+            else
+            {
+                CameraMoving.YMove = 0;
+                objectsMoving.YMove = 0;
+                isVerticCameraMoving = false;
+            }
+            isCameraMoving = isHorizCameraMoving || isVerticCameraMoving;
         }
 
         private void CSGameUserClick(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -85,93 +141,18 @@ namespace DXFormHandler
         }
 
 
+
+
+
         private void CSGameKeyClick(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             System.Windows.Forms.Keys key = e.KeyCode;
             
-            switch (key)
-            {
-                case System.Windows.Forms.Keys.Right:
-
-                    if (VisibleMap.ObjectPosition.XPos < VisibleMap.RightBorder)
-                    {
-                        PositionChange.XMove = 1;
-                        hero.Move(PositionChange);
-                        
-                        if (hero.ObjectPosition.XPos >= heroScreenPosition.XPos + deltaX)
-                        {
-                            PositionChange.XMove = deltaX;
-                            VisibleMap.Move(PositionChange);
-
-                            PositionChange.XMove = -deltaX;
-                            MoveObjects(PositionChange);
-
-                        }
-                        PositionChange.XMove = 0;
-                    }
-                    break;
-
-                case System.Windows.Forms.Keys.Left:
-
-                    if (VisibleMap.ObjectPosition.XPos > VisibleMap.LeftBorder)
-                    {
-                        PositionChange.XMove = -1;
-                        hero.Move(PositionChange);
-
-                        if (hero.ObjectPosition.XPos <= heroScreenPosition.XPos - deltaX)
-                        {
-                            PositionChange.XMove = -deltaX;
-                            VisibleMap.Move(PositionChange);
-                            PositionChange.XMove = deltaX;
-                            MoveObjects(PositionChange);
-                        }
-                        PositionChange.XMove = 0;
-                    }
-                    break;
-
-                case System.Windows.Forms.Keys.Up:
-
-                    if (VisibleMap.ObjectPosition.YPos > VisibleMap.UpBorder)
-                    {
-                        PositionChange.YMove = -1;
-                        hero.Move(PositionChange);
-
-                        if (hero.ObjectPosition.YPos <= heroScreenPosition.YPos - deltaY)
-                        {
-                            PositionChange.YMove = -deltaY;
-                            VisibleMap.Move(PositionChange);
-                            PositionChange.YMove = deltaY;
-                            MoveObjects(PositionChange);
-                        }
-                        PositionChange.YMove = 0;
-                    }
-                    break;
-
-                case System.Windows.Forms.Keys.Down:
-
-                    if (VisibleMap.ObjectPosition.YPos < VisibleMap.DownBorder)
-                    {
-                        PositionChange.YMove = 1;
-                        hero.Move(PositionChange);
-
-                        if (hero.ObjectPosition.YPos >= heroScreenPosition.YPos + deltaY)
-                        {
-                            PositionChange.YMove = deltaY;
-                            VisibleMap.Move(PositionChange);
-                            PositionChange.YMove = -deltaY;
-                            MoveObjects(PositionChange);
-                        }
-                        PositionChange.YMove = 0;
-
-                    }
-                    break;
-
-                default:
-                    break;
-            }
 
             LastKey = key;
         }
+
+        #endregion
 
         protected override void initObjects()
         {
@@ -214,11 +195,16 @@ namespace DXFormHandler
             
         }
 
-        Vector2 npcMove = new Vector2();
         public override void GameLogic()
         {
             #region LOOP
             base.GameLogic();
+
+            if (isCameraMoving)
+            {
+                VisibleMap.Move(CameraMoving);
+                MoveObjects(objectsMoving);
+            }
 
             RenderTarget.DrawBitmap(VisibleMap.ObjectBitmap, VisibleMap.ObjectRectangle, 1, SharpDX.Direct2D1.BitmapInterpolationMode.NearestNeighbor);
 
