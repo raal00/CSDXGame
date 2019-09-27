@@ -60,10 +60,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="2DGame.cs" />
-    <Compile Include="Controller\Bitmap\BitmapHandler.cs" />
+    <Compile Include="Controllers\Bitmap\BitmapHandler.cs" />
+    <Compile Include="GameStrings.cs" />
     <Compile Include="Models\GameForm.cs" />
     <Compile Include="Models\MainForm.cs" />
     <Compile Include="Models\Environment\BackGround.cs" />
+    <Compile Include="Models\Objects\NPCsize.cs" />
     <Compile Include="Models\Styles\FormColors.cs" />
     <Compile Include="Models\Styles\FormStyle.cs" />
     <Compile Include="Models\FPSModel.cs" />
@@ -76,11 +78,14 @@
     <Compile Include="Models\Vector2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Res\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Res\ObjectImages\Hero_1.png" />
+    <Content Include="Res\ObjectImages\Hero_2.png" />
+    <Content Include="Res\ObjectImages\Terrain.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

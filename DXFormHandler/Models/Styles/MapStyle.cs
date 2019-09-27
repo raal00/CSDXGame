@@ -10,7 +10,7 @@ namespace DXFormHandler.Models.Styles
             this.MapHeight = h;
         }
 
-        public readonly int MapWidht;
-        public readonly int MapHeight;
+        public int MapWidht;
+        public int MapHeight;
     }
 }

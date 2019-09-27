@@ -54,6 +54,19 @@ namespace DXFormHandler.Models
 
         public ObjectTypeEnum tag { get; set; }
 
+        public virtual void ReSize(int delta)
+        {
+            ObjectRectangle.Left += delta;
+            ObjectRectangle.Right -= delta;
+            ObjectRectangle.Top += delta;
+            ObjectRectangle.Bottom -= delta;
+
+            ObjectRectangleName.Left += delta;
+            ObjectRectangleName.Right -= delta;
+            ObjectRectangleName.Top += delta;
+            ObjectRectangleName.Bottom -= delta;
+        }
+
         public virtual void Move(Vector2 moveVector2)
         {
             if (moveVector2.XMove != 0)
