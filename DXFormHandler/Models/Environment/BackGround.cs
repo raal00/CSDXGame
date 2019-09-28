@@ -1,4 +1,5 @@
-﻿using SharpDX;
+﻿using DXFormHandler.Models.Styles;
+using SharpDX;
 using SharpDX.Direct2D1;
 using System;
 using System.Collections.Generic;
@@ -26,9 +27,12 @@ namespace DXFormHandler.Models
         {
             base.Move(moveVector2);
         }
-        public override void ReSize(int delta)
+        public override void ReSize()
         {
-            base.ReSize(delta);
+            ObjectRectangle.Left = StandartObjectRectangle.Left * ZoomModel.MapZoom;
+            ObjectRectangle.Right = StandartObjectRectangle.Right * ZoomModel.MapZoom;
+            ObjectRectangle.Top = StandartObjectRectangle.Top * ZoomModel.MapZoom;
+            ObjectRectangle.Bottom = StandartObjectRectangle.Bottom * ZoomModel.MapZoom;
         }
 
     }

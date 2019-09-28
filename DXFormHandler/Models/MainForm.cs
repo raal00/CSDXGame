@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using DXFormHandler.Models.Objects;
+using DXFormHandler.Models.Styles;
 
 namespace DXFormHandler
 {
@@ -83,8 +84,12 @@ namespace DXFormHandler
 
         private void CSGameMouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            changeSize(e.Delta/120);
-            //mapStyle.MapWidht
+                if(e.Delta > 0 && ZoomModel.MapZoom < ZoomModel.ZoomMax)
+                    ZoomModel.MapZoom += 0.01f;
+                else if (e.Delta < 0 && ZoomModel.MapZoom > ZoomModel.ZoomMin)
+                    ZoomModel.MapZoom -= 0.01f;
+
+                changeSize();
         }
 
         #region Events
@@ -155,7 +160,7 @@ namespace DXFormHandler
         protected override void initObjects()
         {
             base.initObjects();
-            mapStyle = new Models.Styles.MapStyle(4000,4000);
+            mapStyle = new Models.Styles.MapStyle(1280 * 3, 720 * 3);
             
             /// INIT ALL GAMEOBJECTS
 
@@ -200,7 +205,7 @@ namespace DXFormHandler
 
             if (isHeroesMoving)
             {
-                if (Math.Abs(endPoint.XPos - hero.ObjectPosition.XPos) > NPCsize.Width || Math.Abs(endPoint.YPos - hero.ObjectPosition.YPos) > NPCsize.Height)
+                if ((Math.Abs(endPoint.XPos - hero.ObjectPosition.XPos) > (NPCsize.Width * ZoomModel.MapZoom)) || (Math.Abs(endPoint.YPos - hero.ObjectPosition.YPos) > (NPCsize.Height * ZoomModel.MapZoom)))
                 {
                     hero.Move(PositionChange);
                 }
@@ -253,23 +258,23 @@ namespace DXFormHandler
             }
             hero.Move(vector);
         }
-        private void changeSize(int delta)
+        private void changeSize()
         {
-            VisibleMap.ReSize(delta * 10);
+            VisibleMap.ReSize();
 
             foreach (var npc in NPCs)
             {
-                npc.ReSize(delta);
+                npc.ReSize();
             }
             foreach (var controllednpc in ControlledNPCs)
             {
-                controllednpc.ReSize(delta);
+                controllednpc.ReSize();
             }
             foreach (var env in Environments)
             {
-                env.ReSize(delta);
+                env.ReSize();
             }
-            hero.ReSize(delta);
+            hero.ReSize();
         }
     }
 }

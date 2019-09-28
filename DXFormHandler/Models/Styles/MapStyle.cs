@@ -12,5 +12,6 @@ namespace DXFormHandler.Models.Styles
 
         public int MapWidht;
         public int MapHeight;
+
     }
 }
