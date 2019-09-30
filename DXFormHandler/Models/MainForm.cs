@@ -29,7 +29,7 @@ namespace DXFormHandler
         #endregion
 
         public List<GameObject> NPCs = new List<GameObject>();
-        public List<Target> ControlledNPCs = new List<Target>();
+        public List<GameObject> ControlledNPCs = new List<GameObject>();
         public List<GameObject> Environments = new List<GameObject>();
 
         System.Windows.Forms.Keys LastKey = System.Windows.Forms.Keys.Escape;
@@ -51,7 +51,8 @@ namespace DXFormHandler
                     NPCs.Add(_object);
                     break;
                 case ObjectTypeEnum.ControlledNPC:
-                    ControlledNPCs.Add(_object as Target);
+                    ControlledNPCs.Add(_object);
+                    Console.WriteLine($"object named {_object.ObjectName} added as controlled npc\n");
                     break;
                 case ObjectTypeEnum.Environment:
                     Environments.Add(_object);
@@ -126,7 +127,7 @@ namespace DXFormHandler
 
             foreach (var target in ControlledNPCs)
             {
-                target.Move(new Vector2() { XMove = e.X, YMove = e.Y });
+                (target as Target).ChangePosition(new Position(e.X, e.Y));
             }
         }
 
@@ -190,15 +191,15 @@ namespace DXFormHandler
 
             foreach (var target in ControlledNPCs)
             {
-                if (target.isHeroesMoving)
+                if ((target as Target).isHeroesMoving)
                 {
-                    if ((Math.Abs(target.EndPosition.XPos - target.ObjectPosition.XPos) > 60) || (Math.Abs(target.EndPosition.YPos - target.ObjectPosition.YPos) > 60))
+                    if ((Math.Abs((target as Target).EndPosition.XPos - target.ObjectPosition.XPos) > 60) || (Math.Abs((target as Target).EndPosition.YPos - target.ObjectPosition.YPos) > 60))
                     {
-                        target.Move(target.PositionChange);
+                        target.Move((target as Target).PositionChange);
                     }
                     else
                     {
-                        target.isHeroesMoving = false;
+                        (target as Target).isHeroesMoving = false;
                     }
                 }
 
