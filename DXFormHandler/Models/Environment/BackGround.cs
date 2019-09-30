@@ -18,21 +18,23 @@ namespace DXFormHandler.Models
 
         }
 
-
-        /// <summary>
-        /// Текстура земли должна двигаться противоположно ее координте
-        /// </summary>
-        /// <param name="moveVector2"></param>
         public override void Move(Vector2 moveVector2)
         {
             base.Move(moveVector2);
         }
-        public override void ReSize()
+
+        public override void ReSize(int delta)
         {
-            ObjectRectangle.Left = StandartObjectRectangle.Left * ZoomModel.MapZoom;
-            ObjectRectangle.Right = StandartObjectRectangle.Right * ZoomModel.MapZoom;
-            ObjectRectangle.Top = StandartObjectRectangle.Top * ZoomModel.MapZoom;
-            ObjectRectangle.Bottom = StandartObjectRectangle.Bottom * ZoomModel.MapZoom;
+            base.ReSize(delta);
+        }
+
+        public override void SetRectangle()
+        {
+            ObjectRectangle.Bottom = ObjectPosition.YPos + ObjectSize.Height / 2;
+            ObjectRectangle.Top = ObjectPosition.YPos - ObjectSize.Height / 2;
+
+            ObjectRectangle.Left = ObjectPosition.XPos - ObjectSize.Width / 2;
+            ObjectRectangle.Right = ObjectPosition.XPos + ObjectSize.Width / 2;
         }
 
     }

@@ -85,11 +85,12 @@ namespace DXFormHandler
         private void CSGameMouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
                 if(e.Delta > 0 && ZoomModel.MapZoom < ZoomModel.ZoomMax)
-                    ZoomModel.MapZoom += 0.01f;
+                    ZoomModel.MapZoom += 0.05f;
                 else if (e.Delta < 0 && ZoomModel.MapZoom > ZoomModel.ZoomMin)
-                    ZoomModel.MapZoom -= 0.01f;
+                    ZoomModel.MapZoom -= 0.05f;
 
-                changeSize();
+                ZoomModel.DeltaZoom = e.Delta/100;
+                MapZoom();
         }
 
         #region Events
@@ -205,7 +206,7 @@ namespace DXFormHandler
 
             if (isHeroesMoving)
             {
-                if ((Math.Abs(endPoint.XPos - hero.ObjectPosition.XPos) > (NPCsize.Width * ZoomModel.MapZoom)) || (Math.Abs(endPoint.YPos - hero.ObjectPosition.YPos) > (NPCsize.Height * ZoomModel.MapZoom)))
+                if ((Math.Abs(endPoint.XPos - hero.ObjectPosition.XPos) > 60) || (Math.Abs(endPoint.YPos - hero.ObjectPosition.YPos) > 60))
                 {
                     hero.Move(PositionChange);
                 }
@@ -258,23 +259,24 @@ namespace DXFormHandler
             }
             hero.Move(vector);
         }
-        private void changeSize()
+
+        private void MapZoom()
         {
-            VisibleMap.ReSize();
+            VisibleMap.ReSize((int)ZoomModel.DeltaZoom);
 
             foreach (var npc in NPCs)
             {
-                npc.ReSize();
+                npc.ReSize((int)ZoomModel.DeltaZoom);
             }
             foreach (var controllednpc in ControlledNPCs)
             {
-                controllednpc.ReSize();
+                controllednpc.ReSize((int)ZoomModel.DeltaZoom);
             }
             foreach (var env in Environments)
             {
-                env.ReSize();
+                env.ReSize((int)ZoomModel.DeltaZoom);
             }
-            hero.ReSize();
+            hero.ReSize((int)ZoomModel.DeltaZoom);
         }
     }
 }

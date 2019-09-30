@@ -13,28 +13,14 @@ namespace DXFormHandler.Models
 {
     class GameObject : IGameObject
     {
-        /*
-          . . . (0,0)_____T_____ (0,n) ->
-                     |         |    L < R
-                     L         R    B < T
-                     |         |
-          . . . . . ._____B_____ 
-                (n,0)            (n,n)
-                    |
-                    V
-        */
 
         public GameObject(string name, string texturePath, Size2 size, Position pos, WindowRenderTarget renderTarget)
         {
             this.ObjectName = name;
             this.ObjectPosition = pos;
+            this.ObjectSize = size;
 
             ObjectRectangle = new RawRectangleF(pos.XPos - size.Width / 2,
-                                                pos.YPos - size.Height / 2,
-                                                pos.XPos + size.Width / 2,
-                                                pos.YPos + size.Height / 2);
-
-            StandartObjectRectangle = new RawRectangleF(pos.XPos - size.Width / 2,
                                                 pos.YPos - size.Height / 2,
                                                 pos.XPos + size.Width / 2,
                                                 pos.YPos + size.Height / 2);
@@ -44,15 +30,13 @@ namespace DXFormHandler.Models
                                                     ObjectRectangle.Right - size.Width / 4,
                                                     ObjectRectangle.Top - 1);
 
-            StandartObjectRectangleName = new RawRectangleF(ObjectRectangle.Left + size.Width / 4,
-                                                    ObjectRectangle.Top - 20,
-                                                    ObjectRectangle.Right - size.Width / 4,
-                                                    ObjectRectangle.Top - 1);
-
             SetTexture(texturePath, renderTarget);
         }
 
+
+        #region Fields
         public Position ObjectPosition;
+        public Size2    ObjectSize;
 
         public readonly string ObjectName;
 
@@ -65,19 +49,17 @@ namespace DXFormHandler.Models
         public float Speed = 3f;
 
         public ObjectTypeEnum tag { get; set; }
+        #endregion
 
-        public virtual void ReSize()
+
+
+        #region methods
+        public virtual void ReSize(int delta)
         {
-            ObjectRectangle.Left = StandartObjectRectangle.Left * ZoomModel.MapZoom;
-            ObjectRectangle.Right = StandartObjectRectangle.Right * ZoomModel.MapZoom;
-            ObjectRectangle.Top = StandartObjectRectangle.Top * ZoomModel.MapZoom;
-            ObjectRectangle.Bottom = StandartObjectRectangle.Bottom * ZoomModel.MapZoom;
+            ObjectSize.Width += delta;
+            ObjectSize.Height += delta;
 
-            ObjectRectangleName.Left = StandartObjectRectangleName.Left * ZoomModel.MapZoom;
-            ObjectRectangleName.Right = StandartObjectRectangleName.Right * ZoomModel.MapZoom;
-            ObjectRectangleName.Top = StandartObjectRectangleName.Top * ZoomModel.MapZoom;
-            ObjectRectangleName.Bottom = StandartObjectRectangleName.Bottom * ZoomModel.MapZoom;
-
+            SetRectangle();
         }
 
         public virtual void Move(Vector2 moveVector2)
@@ -85,24 +67,16 @@ namespace DXFormHandler.Models
             if (moveVector2.XMove != 0)
             {
                 float move = moveVector2.XMove * Speed;
-                ObjectRectangle.Left += move;
-                ObjectRectangle.Right += move;
-
-                ObjectRectangleName.Left += move;
-                ObjectRectangleName.Right += move;
-
                 ObjectPosition.XPos += move;
+
+                SetRectangle();
             }
             if (moveVector2.YMove != 0)
             {
                 float move = moveVector2.YMove * Speed;
-                ObjectRectangle.Bottom += move;
-                ObjectRectangle.Top += move;
-                
-                ObjectRectangleName.Bottom += move;
-                ObjectRectangleName.Top += move;
-                
                 ObjectPosition.YPos += move;
+
+                SetRectangle();
             }
         }
 
@@ -116,5 +90,22 @@ namespace DXFormHandler.Models
             formatConverter.Initialize(bmps, SharpDX.WIC.PixelFormat.Format32bppPBGRA, BitmapDitherType.Spiral8x8, null, 0f, BitmapPaletteType.MedianCut);
             ObjectBitmap = SharpDX.Direct2D1.Bitmap.FromWicBitmap(target, formatConverter);
         }
+
+        public virtual void SetRectangle()
+        {
+            ObjectRectangle.Bottom  = ObjectPosition.YPos + ObjectSize.Height / 2;
+            ObjectRectangle.Top     = ObjectPosition.YPos - ObjectSize.Height / 2;
+
+            ObjectRectangle.Left    = ObjectPosition.XPos - ObjectSize.Width / 2;
+            ObjectRectangle.Right   = ObjectPosition.XPos + ObjectSize.Width / 2;
+
+
+            ObjectRectangleName.Bottom  = ObjectRectangle.Top - 2;
+            ObjectRectangleName.Top     = ObjectRectangle.Top - 20;
+
+            ObjectRectangleName.Left =  ObjectPosition.XPos - ObjectSize.Width / 2;
+            ObjectRectangleName.Right = ObjectPosition.XPos + ObjectSize.Width / 2;
+        }
+        #endregion
     }
 }
