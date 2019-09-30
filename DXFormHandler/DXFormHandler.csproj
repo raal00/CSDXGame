@@ -74,6 +74,7 @@
     <Compile Include="Models\Objects\ObjectTypes.cs" />
     <Compile Include="Models\Styles\MapStyle.cs" />
     <Compile Include="Models\Styles\ZoomModel.cs" />
+    <Compile Include="Models\Target.cs" />
     <Compile Include="Models\Transform.cs" />
     <Compile Include="Models\UserControl\UserControlHandler.cs" />
     <Compile Include="Models\Vector2.cs" />

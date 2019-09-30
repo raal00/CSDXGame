@@ -7,7 +7,7 @@ using DXFormHandler.Models.Styles;
 namespace DXFormHandler
 {
     class MainForm : DXFormHandler.Controller.GameForm
-     {
+    {
         public MainForm(string formTitle) : base(formTitle)
         {
 
@@ -15,17 +15,9 @@ namespace DXFormHandler
 
         #region Require gameObjects
 
-        private GameObject hero;
-
-        private Position endPoint = new Position(255,255);
-        private bool isHeroesMoving = false;
-        private float delX;
-        private float K;
-
-        private Position heroScreenPosition;
-
-        private Vector2 PositionChange = new Vector2() { XMove = 0, YMove = 0 };
-        private Vector2 objectsMoving = new Vector2() { XMove = 0, YMove = 0 };
+        private Position endPoint = new Position(255, 255);
+        
+        private Vector2 CameraMoving = new Vector2() { XMove = 0, YMove = 0 };
         private int cameraSpeed = 2;
 
         private bool isCameraMoving = false;
@@ -37,16 +29,15 @@ namespace DXFormHandler
         #endregion
 
         public List<GameObject> NPCs = new List<GameObject>();
-        public List<GameObject> ControlledNPCs = new List<GameObject>();
+        public List<Target> ControlledNPCs = new List<Target>();
         public List<GameObject> Environments = new List<GameObject>();
 
         System.Windows.Forms.Keys LastKey = System.Windows.Forms.Keys.Escape;
-        public int NpcDistance = 225;
 
         public FormColors colors = null;
-        
-        
-        
+
+
+
 
         public void AddObject(GameObject _object)
         {
@@ -60,7 +51,7 @@ namespace DXFormHandler
                     NPCs.Add(_object);
                     break;
                 case ObjectTypeEnum.ControlledNPC:
-                    ControlledNPCs.Add(_object);
+                    ControlledNPCs.Add(_object as Target);
                     break;
                 case ObjectTypeEnum.Environment:
                     Environments.Add(_object);
@@ -84,13 +75,13 @@ namespace DXFormHandler
 
         private void CSGameMouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-                if(e.Delta > 0 && ZoomModel.MapZoom < ZoomModel.ZoomMax)
-                    ZoomModel.MapZoom += 0.05f;
-                else if (e.Delta < 0 && ZoomModel.MapZoom > ZoomModel.ZoomMin)
-                    ZoomModel.MapZoom -= 0.05f;
+            if (e.Delta > 0 && ZoomModel.MapZoom < ZoomModel.ZoomMax)
+                ZoomModel.MapZoom += 0.05f;
+            else if (e.Delta < 0 && ZoomModel.MapZoom > ZoomModel.ZoomMin)
+                ZoomModel.MapZoom -= 0.05f;
 
-                ZoomModel.DeltaZoom = e.Delta/100;
-                MapZoom();
+            ZoomModel.DeltaZoom = e.Delta / 100;
+            MapZoom();
         }
 
         #region Events
@@ -98,33 +89,33 @@ namespace DXFormHandler
         {
             if (e.X > mainRenderForm.Width - 100)
             {
-                objectsMoving.XMove = -cameraSpeed;
+                CameraMoving.XMove = -cameraSpeed;
                 isHorizCameraMoving = true;
             }
             else if (e.X < 100)
             {
-                objectsMoving.XMove = cameraSpeed;
+                CameraMoving.XMove = cameraSpeed;
                 isHorizCameraMoving = true;
             }
             else
             {
-                objectsMoving.XMove = 0;
+                CameraMoving.XMove = 0;
                 isHorizCameraMoving = false;
             }
 
             if (e.Y > mainRenderForm.Height - 100)
             {
-                objectsMoving.YMove = -cameraSpeed;
+                CameraMoving.YMove = -cameraSpeed;
                 isVerticCameraMoving = true;
             }
             else if (e.Y < 100)
             {
-                objectsMoving.YMove = cameraSpeed;
+                CameraMoving.YMove = cameraSpeed;
                 isVerticCameraMoving = true;
             }
             else
             {
-                objectsMoving.YMove = 0;
+                CameraMoving.YMove = 0;
                 isVerticCameraMoving = false;
             }
             isCameraMoving = isHorizCameraMoving || isVerticCameraMoving;
@@ -132,26 +123,23 @@ namespace DXFormHandler
 
         private void CSGameUserClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            endPoint = new Position(e.X, e.Y);
-            delX = e.X - hero.ObjectPosition.XPos;
-            K = delX / (e.Y - hero.ObjectPosition.YPos);
-            PositionChange = new Vector2() { XMove = delX / 100, YMove = delX / 100f / K };
-            isHeroesMoving = true;
+
+            foreach (var target in ControlledNPCs)
+            {
+                target.Move(new Vector2() { XMove = e.X, YMove = e.Y });
+            }
         }
 
         private void CSGameWindowSizeChange(object sender, EventArgs e)
         {
-            
+
         }
-
-
-
 
 
         private void CSGameKeyClick(object sender, System.Windows.Forms.KeyEventArgs e)
         {
             System.Windows.Forms.Keys key = e.KeyCode;
-            
+
 
             LastKey = key;
         }
@@ -162,7 +150,7 @@ namespace DXFormHandler
         {
             base.initObjects();
             mapStyle = new Models.Styles.MapStyle(1280 * 3, 720 * 3);
-            
+
             /// INIT ALL GAMEOBJECTS
 
             // Screen positions
@@ -170,13 +158,9 @@ namespace DXFormHandler
             // 
             // (m, 0)   (m,n)
 
-            hero = new GameObject("Your name", GameStrings.ObjectImagesPath+"Hero_1.png", new SharpDX.Size2(NPCsize.Width, NPCsize.Height), new Position(mainRenderForm.Width/2, mainRenderForm.Height / 2), RenderTarget);
-            hero.tag = ObjectTypeEnum.Hero;
-            heroScreenPosition = new Position(mainRenderForm.Width / 2, mainRenderForm.Height / 2);
-
-            VisibleMap = new Background("1", GameStrings.ObjectImagesPath+"Terrain.png", new SharpDX.Size2(mapStyle.MapWidht, mapStyle.MapHeight), new Position(mapStyle.MapWidht / 2, mapStyle.MapHeight / 2), RenderTarget);
+            VisibleMap = new Background("1", GameStrings.ObjectImagesPath + "Terrain.png", new SharpDX.Size2(mapStyle.MapWidht, mapStyle.MapHeight), new Position(mapStyle.MapWidht / 2, mapStyle.MapHeight / 2), RenderTarget);
             VisibleMap.tag = ObjectTypeEnum.Terrain;
-            
+
         }
 
 
@@ -189,7 +173,7 @@ namespace DXFormHandler
             colors = new FormColors(RenderTarget);
             /// ...
             /// 
-            
+
         }
 
         public override void GameLogic()
@@ -199,84 +183,82 @@ namespace DXFormHandler
 
             if (isCameraMoving)
             {
-                MoveObjects(objectsMoving);
+                MoveObjects(CameraMoving);
             }
 
             RenderTarget.DrawBitmap(VisibleMap.ObjectBitmap, VisibleMap.ObjectRectangle, 1, SharpDX.Direct2D1.BitmapInterpolationMode.NearestNeighbor);
 
-            if (isHeroesMoving)
+            foreach (var target in ControlledNPCs)
             {
-                if ((Math.Abs(endPoint.XPos - hero.ObjectPosition.XPos) > 60) || (Math.Abs(endPoint.YPos - hero.ObjectPosition.YPos) > 60))
+                if (target.isHeroesMoving)
                 {
-                    hero.Move(PositionChange);
+                    if ((Math.Abs(target.EndPosition.XPos - target.ObjectPosition.XPos) > 60) || (Math.Abs(target.EndPosition.YPos - target.ObjectPosition.YPos) > 60))
+                    {
+                        target.Move(target.PositionChange);
+                    }
+                    else
+                    {
+                        target.isHeroesMoving = false;
+                    }
                 }
-                else
+
+                // DRAW NPCs
+                foreach (var npc in NPCs)
                 {
-                    isHeroesMoving = false;
+                    RenderTarget.DrawBitmap(npc.ObjectBitmap, npc.ObjectRectangle, 1, SharpDX.Direct2D1.BitmapInterpolationMode.NearestNeighbor);
+                    RenderTarget.DrawText(npc.ObjectName, this.textFormat, npc.ObjectRectangleName, new FormColors(RenderTarget).redBrush);
+                }
+                // DRAW ControlledNPCs
+                foreach (var controlledNpc in ControlledNPCs)
+                {
+                    RenderTarget.DrawBitmap(controlledNpc.ObjectBitmap, controlledNpc.ObjectRectangle, 1, SharpDX.Direct2D1.BitmapInterpolationMode.NearestNeighbor);
+                    RenderTarget.DrawText(controlledNpc.ObjectName, this.textFormat, controlledNpc.ObjectRectangleName, new FormColors(RenderTarget).redBrush);
+                }
+                // DRAW ENVIRONMENT
+                foreach (var env in Environments)
+                {
+                    RenderTarget.DrawBitmap(env.ObjectBitmap, env.ObjectRectangle, 1, SharpDX.Direct2D1.BitmapInterpolationMode.NearestNeighbor);
+                }
+
+                #endregion
+            }
+        }
+
+            private void MoveObjects(Vector2 vector)
+            {
+                VisibleMap.Move(vector);
+                endPoint.XPos += vector.XMove;
+                endPoint.YPos += vector.YMove;
+                foreach (var npc in NPCs)
+                {
+                    npc.Move(vector);
+                }
+                foreach (var controllednpc in ControlledNPCs)
+                {
+                    controllednpc.Move(vector);
+                }
+                foreach (var env in Environments)
+                {
+                    env.Move(vector);
                 }
             }
 
-            RenderTarget.DrawBitmap(hero.ObjectBitmap, hero.ObjectRectangle, 1, SharpDX.Direct2D1.BitmapInterpolationMode.NearestNeighbor);
-            RenderTarget.DrawText(hero.ObjectName, this.textFormat, hero.ObjectRectangleName, new FormColors(RenderTarget).redBrush);
+            private void MapZoom()
+            {
+                VisibleMap.ReSize((int)ZoomModel.DeltaZoom);
 
-            // DRAW NPCs
-            foreach (var npc in NPCs)
-            {
-                RenderTarget.DrawBitmap(npc.ObjectBitmap, npc.ObjectRectangle, 1, SharpDX.Direct2D1.BitmapInterpolationMode.NearestNeighbor);
-                RenderTarget.DrawText(npc.ObjectName, this.textFormat, npc.ObjectRectangleName, new FormColors(RenderTarget).redBrush);
+                foreach (var npc in NPCs)
+                {
+                    npc.ReSize((int)ZoomModel.DeltaZoom);
+                }
+                foreach (var controllednpc in ControlledNPCs)
+                {
+                    controllednpc.ReSize((int)ZoomModel.DeltaZoom);
+                }
+                foreach (var env in Environments)
+                {
+                    env.ReSize((int)ZoomModel.DeltaZoom);
+                }
             }
-            // DRAW ControlledNPCs
-            foreach (var controlledNpc in ControlledNPCs)
-            {
-                RenderTarget.DrawBitmap(controlledNpc.ObjectBitmap, controlledNpc.ObjectRectangle, 1, SharpDX.Direct2D1.BitmapInterpolationMode.NearestNeighbor);
-                RenderTarget.DrawText(controlledNpc.ObjectName, this.textFormat, controlledNpc.ObjectRectangleName, new FormColors(RenderTarget).redBrush);
-            }
-            // DRAW ENVIRONMENT
-            foreach (var env in Environments)
-            {
-                RenderTarget.DrawBitmap(env.ObjectBitmap, env.ObjectRectangle, 1, SharpDX.Direct2D1.BitmapInterpolationMode.NearestNeighbor);
-            }
-
-            #endregion
-        }
-
-        private void MoveObjects(Vector2 vector)
-        {
-            VisibleMap.Move(vector);
-            endPoint.XPos += vector.XMove;
-            endPoint.YPos += vector.YMove;
-            foreach (var npc in NPCs)
-            {
-                npc.Move(vector);
-            }
-            foreach (var controllednpc in ControlledNPCs)
-            {
-                controllednpc.Move(vector);
-            }
-            foreach (var env in Environments)
-            {
-                env.Move(vector);
-            }
-            hero.Move(vector);
-        }
-
-        private void MapZoom()
-        {
-            VisibleMap.ReSize((int)ZoomModel.DeltaZoom);
-
-            foreach (var npc in NPCs)
-            {
-                npc.ReSize((int)ZoomModel.DeltaZoom);
-            }
-            foreach (var controllednpc in ControlledNPCs)
-            {
-                controllednpc.ReSize((int)ZoomModel.DeltaZoom);
-            }
-            foreach (var env in Environments)
-            {
-                env.ReSize((int)ZoomModel.DeltaZoom);
-            }
-            hero.ReSize((int)ZoomModel.DeltaZoom);
-        }
     }
 }

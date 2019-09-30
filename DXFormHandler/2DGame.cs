@@ -25,9 +25,9 @@ namespace DXFormHandler
             FormStyle.ShowFPS = true;
             GameForm = new MainForm("Test form");
 
-            GameForm.AddObject(new GameObject("npc 1", GameStrings.ObjectImagesPath + "Hero_2.png", new SharpDX.Size2(NPCsize.Width, NPCsize.Height), new Position(521, 521), GameForm.RenderTarget) { tag = ObjectTypeEnum.NPC });
-            GameForm.AddObject(new GameObject("npc 2", GameStrings.ObjectImagesPath + "Hero_2.png", new SharpDX.Size2(NPCsize.Width, NPCsize.Height), new Position(400, 600), GameForm.RenderTarget) { tag = ObjectTypeEnum.NPC });
-            GameForm.AddObject(new GameObject("npc 3", GameStrings.ObjectImagesPath + "Hero_2.png", new SharpDX.Size2(NPCsize.Width, NPCsize.Height), new Position(555, 544), GameForm.RenderTarget) { tag = ObjectTypeEnum.ControlledNPC });
+            GameForm.AddObject(new Target("npc 1", GameStrings.ObjectImagesPath + "Hero_2.png", new SharpDX.Size2(NPCsize.Width, NPCsize.Height), new Position(521, 521), GameForm.RenderTarget) { tag = ObjectTypeEnum.NPC });
+            GameForm.AddObject(new Target("npc 2", GameStrings.ObjectImagesPath + "Hero_2.png", new SharpDX.Size2(NPCsize.Width, NPCsize.Height), new Position(400, 600), GameForm.RenderTarget) { tag = ObjectTypeEnum.NPC });
+            GameForm.AddObject(new Target("npc 3", GameStrings.ObjectImagesPath + "Hero_2.png", new SharpDX.Size2(NPCsize.Width, NPCsize.Height), new Position(555, 544), GameForm.RenderTarget) { tag = ObjectTypeEnum.ControlledNPC });
 
             GameForm.StartRender();
             GameForm.GamePauseMode(true);
