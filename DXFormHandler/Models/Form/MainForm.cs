@@ -124,10 +124,12 @@ namespace DXFormHandler
 
         private void CSGameUserClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-
+            Position positionE = new Position(e.X, e.Y); 
             foreach (var target in ControlledNPCs)
             {
-                (target as Target).ChangePosition(new Position(e.X, e.Y));
+                (target as Target).ChangePosition(positionE);
+                positionE.XPos += 128;
+                positionE.YPos += 128;
             }
         }
 
@@ -193,7 +195,7 @@ namespace DXFormHandler
             {
                 if ((target as Target).isHeroesMoving)
                 {
-                    if ((Math.Abs((target as Target).EndPosition.XPos - target.ObjectPosition.XPos) > 60) || (Math.Abs((target as Target).EndPosition.YPos - target.ObjectPosition.YPos) > 60))
+                    if ((Math.Abs((target as Target).EndPosition.XPos - target.ObjectPosition.XPos) > 30) || (Math.Abs((target as Target).EndPosition.YPos - target.ObjectPosition.YPos) > 30))
                     {
                         target.Move((target as Target).PositionChange);
                     }
